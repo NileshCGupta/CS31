@@ -163,7 +163,7 @@ int main(int argc, char** argv)
 	if(button == NULL) { perror("ERROR: Cannot initialize MRAA button context"); exit(EXIT_FAILURE); }
 
 	// Init pollfd
-	ufd[0].fd = STDIN;
+	ufd[0].fd = 0;
 	ufd[0].events = POLLIN;
 
     signal(SIGINT, handler);
@@ -190,7 +190,7 @@ int main(int argc, char** argv)
 		tm = localtime(&t);
 		currtime_sec = t;
 
-        rv = poll(ufd, 1, 0);
+        rv = poll(ufd, 1, 100);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
