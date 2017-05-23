@@ -178,12 +178,12 @@ int main(int argc, char** argv)
         	tempread();
         
 
-        rv = poll(ufd, 1, 500);
+        rv = poll(ufd, 1, 0);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
         else if(rv == 0)
-        	printf("Timeout occured! No data received");
+        	continue;
         else {
         	getline(&input, &len, 0); // receive normal data
         	command_handler(input);
