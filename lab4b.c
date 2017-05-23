@@ -40,31 +40,6 @@ void handler(int signum)
     runflag = 0;
 }
 
-void command_handler(char* command)
-{
-	char* off = "OFF";
-	char* stop = "STOP";
-	char* start = "START";
-	char* scalef = "SCALE=F";
-	char* scalec = "SCALE=C";
-	char* periodn = "PERIOD=";
-
-	if(strcmp(command, off) == 0)
-		buttonpressed();
-	else if(strcmp(command, stop) == 0)
-		reportsflag = 0;
-	else if(strcmp(command, start) == 0)
-		reportsflag = 1;
-	else if(strcmp(command, scalef) == 0)
-		scale = 'F';
-	else if(strcmp(command, scalec) == 0)
-		scale = 'C';
-	// else if(strncmp(command, periodn) == 0)
-	// {
-		
-	// }
-}
-
 void buttonpressed()
 {
 	time_t t = time(NULL);
@@ -109,6 +84,31 @@ void tempread()
 		fprintf(log_file, "%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 		fprintf(log_file, "%2.1f\n", temperature);
 	}
+}
+
+void command_handler(char* command)
+{
+	char* off = "OFF";
+	char* stop = "STOP";
+	char* start = "START";
+	char* scalef = "SCALE=F";
+	char* scalec = "SCALE=C";
+	char* periodn = "PERIOD=";
+
+	if(strcmp(command, off) == 0)
+		buttonpressed();
+	else if(strcmp(command, stop) == 0)
+		reportsflag = 0;
+	else if(strcmp(command, start) == 0)
+		reportsflag = 1;
+	else if(strcmp(command, scalef) == 0)
+		scale = 'F';
+	else if(strcmp(command, scalec) == 0)
+		scale = 'C';
+	// else if(strncmp(command, periodn) == 0)
+	// {
+		
+	// }
 }
 
 int main(int argc, char** argv)
