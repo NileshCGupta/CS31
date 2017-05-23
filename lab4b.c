@@ -108,12 +108,10 @@ void command_handler(char* command)
 		reportsflag = 1;
 	else if(strcmp(command, scalef) == 0)
 		scale = 'F';
-	else if(strcmp(command, scalec) == 0)
+	else if(strcmp(command, scalec) == 0)	
 		scale = 'C';
-	// else if(strncmp(command, periodn) == 0)
-	// {
-		
-	// }
+	else if(strncmp(command, periodn, 7) == 0)	// Only campare up to PERIOD=
+		period = atoi(command[7]);
 }
 
 int main(int argc, char** argv)
@@ -206,8 +204,9 @@ int main(int argc, char** argv)
         	perror("ERROR: Poll");
         else if(rv == 1) {
         	if(ufd[0].revents & POLLIN) {
-        		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); exit(EXIT_FAILURE); } // receive normal data
-        		// printf("%s", input);
+        		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); 
+        												exit(EXIT_FAILURE); } // receive normal data
+        		strtok(input, "\n");
         		command_handler(input);
         	}
         } 
