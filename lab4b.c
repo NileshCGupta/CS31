@@ -24,9 +24,9 @@ char scale;
 
 char buff[10];
 // STDIN pollfd data
-struct pollfd ufd[1];
+/* struct pollfd ufd[1];
 ufd[0].fd = 0;
-ufd[0].events = POLLIN;
+ufd[0].events = POLLIN; */
 
 mraa_aio_context temp;
 
@@ -35,32 +35,32 @@ void handler(int signum)
     fprintf(stderr, "Exit program, received signal: %d.\n", signum);
     runflag = 0;
 }
-
-// void command_handler(char[] command)
-// {
-// 	switch(command)
-// 	{
-// 		case "OFF":
-// 			break;
-// 		case "STOP":
-// 			break;
-// 		case "START":
-// 			break;
-// 		case "SCALE=F":
-// 			break;
-// 		case "SCALE=C":
-// 			break;
-// 		case "PERIOD="
-// 	}
-// }
-
+/*
+void command_handler(char[] command)
+{
+	switch(command)
+	{
+		case "OFF":
+			break;
+		case "STOP":
+			break;
+		case "START":
+			break;
+		case "SCALE=F":
+			break;
+		case "SCALE=C":
+			break;
+		case "PERIOD="
+	}
+}
+*/
 void tempread()
 {
 	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+    printf("%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
 	uint16_t reading = mraa_aio_read(temp);
-
-	// int reading = analogRead(0);
 
 	float R = 1023.0/reading - 1.0;
 	R = R0 * R;
@@ -71,10 +71,12 @@ void tempread()
 	if(scale == 'F')
 		temperature = 1.8 * temperature + 32;
 
-	printf("temperature = %2.1f\n", temperature);
+	printf("%2.1f\n", temperature);
 	
-	if(logflag)
+	if(logflag) {
+		printf("%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 		printf(logfile, "temperature = %2.1f", temperature);
+	}
 }
 
 int main(int argc, char** argv)
@@ -99,7 +101,7 @@ int main(int argc, char** argv)
 				break;
 
 			case 's':
-				scale = *optarg;
+				scale = optarg[0];
 				break;
 
 			case 'l':
@@ -136,14 +138,14 @@ int main(int argc, char** argv)
         tempread();
         rv = poll(ufd, 1, 500);
 
-        if(rv == -1) 
+        /* if(rv == -1) 
         	perror("ERROR: Poll");
         else if(rv == 0)
         	printf("Timeout occured! No data received");
         else {
         	recv(s1, buff, sizeof(buff), 0); // receive normal data
         	command_handler(buff);
-        }
+        } */
 
         sleep(period);
     }
@@ -157,25 +159,3 @@ int main(int argc, char** argv)
     mraa_aio_close(temp);
 	exit(0);
 }
-
-// #include "mraa/aio.h"
-
-// int
-// main()
-// {
-//     mraa_aio_context adc_a0;
-//     uint16_t adc_value = 0;
-//     float adc_value_float = 0.0;
-//     adc_a0 = mraa_aio_init(0);
-//     if (adc_a0 == NULL) {
-//         return 1;
-//     }
-//     for (;;) {
-//         adc_value = mraa_aio_read(adc_a0);
-//         adc_value_float = mraa_aio_read_float(adc_a0);
-//         fprintf(stdout, "ADC A0 read %X - %d\n", adc_value, adc_value);
-//         fprintf(stdout, "ADC A0 read float - %.5f\n", adc_value_float);
-//     }
-//     mraa_aio_close(adc_a0);
-//     return MRAA_SUCCESS;
-// }
