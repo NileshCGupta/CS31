@@ -12,6 +12,7 @@
 #include <mraa/aio.h>
 #include <mraa/i2c.h>
 
+#define BIL 1000000000
 const int B = 4275;
 const int R0 = 100000;
 // const int pinTempSensor = A0;
@@ -30,6 +31,9 @@ size_t len = 0;
 ssize_t nread;
 // STDIN pollfd data
 struct pollfd ufd[1];
+// Time data
+time_t t;
+struct tm *tm;
 
 mraa_aio_context temp;
 mraa_gpio_context button;
@@ -42,8 +46,6 @@ void handler(int signum)
 
 void buttonpressed()
 {
-	time_t t = time(NULL);
-	struct tm *tm = localtime(&t);
     printf("%d:%d:%d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
     if(logflag) {
@@ -62,10 +64,8 @@ void buttonread()
 }
 
 void tempread()
-{
-	time_t t = time(NULL);
-	struct tm *tm = localtime(&t);
-    printf("%d:%d:%d ", (tm->tm_hour - 1) + 12, tm->tm_min, tm->tm_sec);
+{	
+    printf("%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
 	uint16_t reading = mraa_aio_read(temp);
 
@@ -170,26 +170,35 @@ int main(int argc, char** argv)
     signal(SIGINT, handler);
     int rv;
 
+    t = time(NULL);
+	*tm = localtime(&t);
+	long long currtime_sec = t;
+	long long prevtime_sec = currtime_sec - period*BIL;
+
     while(runflag) {
+    	// Update current time        
+        t = time(NULL);
+		*tm = localtime(&t);
+		currtime_sec = t;
+
     	buttonread();
     	if(!runflag)
     		break;
     	if(reportsflag & runflag)
-        	tempread();
-        
+    		// Check if prevtime_sec read was a period or more before the current time
+    		if(currtime_sec >= prevtime_sec + period*BIL) {
+    			prevtime_sec = currtime_sec;
+    			tempread();
+    		}
 
         rv = poll(ufd, 1, 0);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
-        else if(rv == 0)
-        	continue;
-        else {
+        else if(rv == 1) {
         	getline(&input, &len, 0); // receive normal data
         	command_handler(input);
         } 
-
-        sleep(period);
     }
     
     //  Close log file
