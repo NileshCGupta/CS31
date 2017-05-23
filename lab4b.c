@@ -160,6 +160,9 @@ int main(int argc, char** argv)
 	setenv("TZ", "PST8PDT", 1);
     tzset();
 
+    // Init input buffer
+    // input = malloc(1024 * sizeof(char));
+
 	// Init MRAA temperature & button contexts
 	temp = mraa_aio_init(0);
 	button = mraa_gpio_init(3);
@@ -200,8 +203,10 @@ int main(int argc, char** argv)
         if(rv == -1) 
         	perror("ERROR: Poll");
         else if(rv == 1) {
-        	getline(&input, &len, 0); // receive normal data
-        	command_handler(input);
+        	if(ufd[0].revents & POLLIN) {
+        		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); exit(EXIT_FAILURE); } // receive normal data
+        		command_handler(input);
+        	}
         } 
     }
     
