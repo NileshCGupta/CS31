@@ -29,9 +29,9 @@ char *input;
 size_t len = 0;
 ssize_t nread;
 // STDIN pollfd data
-/* struct pollfd ufd[1];
+struct pollfd ufd[1];
 ufd[0].fd = 0;
-ufd[0].events = POLLIN; */
+ufd[0].events = POLLIN;
 
 mraa_aio_context temp;
 mraa_gpio_context button;
