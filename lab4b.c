@@ -45,10 +45,10 @@ void handler(int signum)
 
 void buttonpressed()
 {
-    printf("%2d:%2d:%2d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    printf("%02d:%02d:%02d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
     if(logflag) {
-		fprintf(log_file, "%2d:%2d:%2d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(log_file, "%02d:%02d:%02d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 
 	runflag = 0;
@@ -68,7 +68,7 @@ void buttonread()
 
 void tempread()
 {	
-    printf("%2d:%2d:%2d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    printf("%02d:%02d:%02d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
 	uint16_t reading = mraa_aio_read(temp);
 
@@ -84,7 +84,7 @@ void tempread()
 	printf("%2.1f\n", temperature);
 	
 	if(logflag) {
-		fprintf(log_file, "%2d:%2d:%2d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(log_file, "%02d:%02d:%02d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
 		fprintf(log_file, "%2.1f\n", temperature);
 	}
 }
