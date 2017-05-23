@@ -91,8 +91,6 @@ void tempread()
 
 void command_handler(char* command)
 {
-	printf("%s", command);
-
 	char* off = "OFF";
 	char* stop = "STOP";
 	char* start = "START";
@@ -111,7 +109,7 @@ void command_handler(char* command)
 	else if(strcmp(command, scalec) == 0)	
 		scale = 'C';
 	else if(strncmp(command, periodn, 7) == 0)	// Only campare up to PERIOD=
-		period = atoi(command[7]);
+		period = atoi(command + 7);				// Get period argument
 }
 
 int main(int argc, char** argv)
@@ -206,6 +204,8 @@ int main(int argc, char** argv)
         	if(ufd[0].revents & POLLIN) {
         		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); 
         												exit(EXIT_FAILURE); } // receive normal data
+        		if(logflag)
+        			fprintf(log_file, "%s", command);
         		strtok(input, "\n");
         		command_handler(input);
         	}
@@ -218,7 +218,7 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    mraa_aio_close(temp);
-    mraa_gpio_close(button);
+    /* mraa_aio_close(temp);
+    mraa_gpio_close(button); */
 	exit(0);
 }
