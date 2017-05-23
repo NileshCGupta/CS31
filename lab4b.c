@@ -30,8 +30,6 @@ size_t len = 0;
 ssize_t nread;
 // STDIN pollfd data
 struct pollfd ufd[1];
-ufd[0].fd = 0;
-ufd[0].events = POLLIN;
 
 mraa_aio_context temp;
 mraa_gpio_context button;
@@ -42,7 +40,7 @@ void handler(int signum)
     runflag = 0;
 }
 
-/*void command_handler(char* command)
+void command_handler(char* command)
 {
 	char* off = "OFF";
 	char* stop = "STOP";
@@ -65,7 +63,7 @@ void handler(int signum)
 	// {
 		
 	// }
-}*/
+}
 
 void buttonpressed()
 {
@@ -162,10 +160,14 @@ int main(int argc, char** argv)
 	// Init MRAA temperature & button contexts
 	temp = mraa_aio_init(0);
 	button = mraa_gpio_init(3);
-	// if(temp == NULL) { perror("ERROR: Cannot initialize MRAA context"); exit(EXIT_FAILURE); }
+	if(temp == NULL) { perror("ERROR: Cannot initialize MRAA temp context"); exit(EXIT_FAILURE); }
+	if(button == NULL) { perror("ERROR: Cannot initialize MRAA button context"); exit(EXIT_FAILURE); }
+
+	// Init pollfd
+	ufd[0].fd = 0;
+	ufd[0].events = POLLIN;
 
     signal(SIGINT, handler);
-
     int rv;
 
     while(runflag) {
@@ -176,7 +178,7 @@ int main(int argc, char** argv)
         	tempread();
         
 
-        /* rv = poll(ufd, 1, 500);
+        rv = poll(ufd, 1, 500);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
@@ -185,7 +187,7 @@ int main(int argc, char** argv)
         else {
         	getline(&input, &len, 0); // receive normal data
         	command_handler(input);
-        } */
+        } 
 
         sleep(period);
     }
