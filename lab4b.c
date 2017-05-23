@@ -21,7 +21,8 @@ int runflag = 1;
 int reportsflag = 1;
 
 int period = 1;
-char *logfile;
+char *logfile;	// name of log file
+FILE *log_file;	// log file descriptor
 char scale;
 
 char *input;
@@ -33,7 +34,7 @@ ufd[0].fd = 0;
 ufd[0].events = POLLIN; */
 
 mraa_aio_context temp;
-mraa_aio_context button;
+mraa_gpio_context button;
 
 void handler(int signum) 
 {
@@ -73,7 +74,7 @@ void buttonpressed()
     printf("%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
     if(logflag) {
-		fprintf(logfile, "%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(log_file, "%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 
 	runflag = 0;
@@ -107,15 +108,14 @@ void tempread()
 	printf("%2.1f\n", temperature);
 	
 	if(logflag) {
-		fprintf(logfile, "%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
-		fprintf(logfile, "%2.1f", temperature);
+		fprintf(log_file, "%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(log_file, "%2.1f", temperature);
 	}
 }
 
 int main(int argc, char** argv)
 {
 	int opt = 0;
-	FILE *log_file;
 
 	static struct option long_opts[] =
 	{
