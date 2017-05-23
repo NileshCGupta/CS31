@@ -92,7 +92,7 @@ void tempread()
 {
 	time_t t = time(NULL);
 	struct tm *tm = localtime(&t);
-    printf("%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    printf("%d:%d:%d ", (tm->tm_hour - 1) + 12, tm->tm_min, tm->tm_sec);
 
 	uint16_t reading = mraa_aio_read(temp);
 
@@ -172,11 +172,11 @@ int main(int argc, char** argv)
     	buttonread();
     	if(!runflag)
     		break;
-    	if(reportsflag)
+    	if(reportsflag & runflag)
         	tempread();
         
 
-        /*rv = poll(ufd, 1, 500);
+        /* rv = poll(ufd, 1, 500);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
         else {
         	getline(&input, &len, 0); // receive normal data
         	command_handler(input);
-        }*/
+        } */
 
         sleep(period);
     }
