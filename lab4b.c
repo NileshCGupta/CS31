@@ -71,10 +71,10 @@ void buttonpressed()
 {
 	time_t t = time(NULL);
 	struct tm *tm = localtime(&t);
-    printf("%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    printf("%d:%d:%d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 
     if(logflag) {
-		fprintf(log_file, "%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(log_file, "%d:%d:%d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 
 	runflag = 0;
@@ -109,7 +109,7 @@ void tempread()
 	
 	if(logflag) {
 		fprintf(log_file, "%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
-		fprintf(log_file, "%2.1f", temperature);
+		fprintf(log_file, "%2.1f\n", temperature);
 	}
 }
 
