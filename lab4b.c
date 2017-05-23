@@ -25,7 +25,7 @@ char *logfile;	// name of log file
 FILE *log_file;	// log file descriptor
 char scale;
 
-char *input;
+char *input = NULL;
 size_t len = 0;
 ssize_t nread;
 // STDIN pollfd data
@@ -163,7 +163,7 @@ int main(int argc, char** argv)
     tzset();
 
     // Init input buffer
-    // input = malloc(1024 * sizeof(char));
+    // input = NULL;
 
 	// Init MRAA temperature & button contexts
 	temp = mraa_aio_init(0);
@@ -207,7 +207,7 @@ int main(int argc, char** argv)
         else if(rv == 1) {
         	if(ufd[0].revents & POLLIN) {
         		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); exit(EXIT_FAILURE); } // receive normal data
-        		printf("%s", input);
+        		// printf("%s", input);
         		command_handler(input);
         	}
         } 
