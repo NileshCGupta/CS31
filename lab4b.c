@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <poll.h>
+#include <string.h>
 
 #include <mraa/aio.h>
 #include <mraa/i2c.h>
@@ -17,43 +18,75 @@ const int R0 = 100000;
 
 int logflag = 0;
 int runflag = 1;
+int reportsflag = 1;
 
 int period = 1;
 char *logfile;
 char scale;
 
-char buff[10];
+char *input;
+size_t len = 0;
+ssize_t nread;
 // STDIN pollfd data
 /* struct pollfd ufd[1];
 ufd[0].fd = 0;
 ufd[0].events = POLLIN; */
 
 mraa_aio_context temp;
+mraa_aio_context button;
 
 void handler(int signum) 
 {
     fprintf(stderr, "Exit program, received signal: %d.\n", signum);
     runflag = 0;
 }
-/*
-void command_handler(char[] command)
+
+void command_handler(char command)
 {
-	switch(command)
-	{
-		case "OFF":
-			break;
-		case "STOP":
-			break;
-		case "START":
-			break;
-		case "SCALE=F":
-			break;
-		case "SCALE=C":
-			break;
-		case "PERIOD="
-	}
+	char* off = "OFF";
+	char* stop = "STOP";
+	char* start = "START";
+	char* scalef = "SCALE=F";
+	char* scalec = "SCALE=C";
+	char* periodn = "PERIOD=";
+
+	if(strcmp(command, off) == 0)
+		buttonpressed();
+	else if(strcmp(command, stop) == 0)
+		reportsflag = 0;
+	else if(strcmp(command, start) == 0)
+		reportsflag = 1;
+	else if(strcmp(command, scalef) == 0)
+		scale = 'F';
+	else if(strcmp(command, scalec) == 0)
+		scale = 'C';
+	// else if(strncmp(command, periodn) == 0)
+	// {
+		
+	// }
 }
-*/
+
+void buttonpressed()
+{
+	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+    printf("%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+    if(logflag) {
+		fprintf(logfile, "%d:%d:%d SHUTDOWN", tm->tm_hour, tm->tm_min, tm->tm_sec);
+	}
+
+	runflag = 0;
+}
+
+void buttonread()
+{
+	int buttonState = mraa_gpio_read(button);
+	// Button has been pressed
+	if(buttonState)
+		buttonpressed(); // SHUTDOWN
+}
+
 void tempread()
 {
 	time_t t = time(NULL);
@@ -74,8 +107,8 @@ void tempread()
 	printf("%2.1f\n", temperature);
 	
 	if(logflag) {
-		printf("%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
-		printf(logfile, "temperature = %2.1f", temperature);
+		fprintf(logfile, "%d:%d:%d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(logfile, "%2.1f", temperature);
 	}
 }
 
@@ -126,8 +159,9 @@ int main(int argc, char** argv)
 	setenv("TZ", "PST8PDT", 1);
     tzset();
 
-	// Init MRAA temperature context
+	// Init MRAA temperature & button contexts
 	temp = mraa_aio_init(0);
+	button = mraa_gpio_init(3);
 	// if(temp == NULL) { perror("ERROR: Cannot initialize MRAA context"); exit(EXIT_FAILURE); }
 
     signal(SIGINT, handler);
@@ -135,17 +169,23 @@ int main(int argc, char** argv)
     int rv;
 
     while(runflag) {
-        tempread();
+    	buttonread();
+    	if(!runflag)
+    		break;
+    	if(reportsflag)
+        	tempread();
+        
+
         rv = poll(ufd, 1, 500);
 
-        /* if(rv == -1) 
+        if(rv == -1) 
         	perror("ERROR: Poll");
         else if(rv == 0)
         	printf("Timeout occured! No data received");
         else {
-        	recv(s1, buff, sizeof(buff), 0); // receive normal data
-        	command_handler(buff);
-        } */
+        	getline(&input, &len, 0); // receive normal data
+        	command_handler(input);
+        }
 
         sleep(period);
     }
@@ -157,5 +197,6 @@ int main(int argc, char** argv)
     }
 
     mraa_aio_close(temp);
+    mraa_gpio_close(button);
 	exit(0);
 }
