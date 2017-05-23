@@ -41,7 +41,7 @@ void handler(int signum)
     runflag = 0;
 }
 
-void command_handler(char command)
+/*void command_handler(char* command)
 {
 	char* off = "OFF";
 	char* stop = "STOP";
@@ -64,7 +64,7 @@ void command_handler(char command)
 	// {
 		
 	// }
-}
+}*/
 
 void buttonpressed()
 {
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
         	tempread();
         
 
-        rv = poll(ufd, 1, 500);
+        /*rv = poll(ufd, 1, 500);
 
         if(rv == -1) 
         	perror("ERROR: Poll");
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
         else {
         	getline(&input, &len, 0); // receive normal data
         	command_handler(input);
-        }
+        }*/
 
         sleep(period);
     }
