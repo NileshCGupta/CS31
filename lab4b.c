@@ -205,7 +205,7 @@ int main(int argc, char** argv)
         		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); 
         												exit(EXIT_FAILURE); } // receive normal data
         		if(logflag)
-        			fprintf(log_file, "%s", command);
+        			fprintf(log_file, "%s", input);
         		strtok(input, "\n");
         		command_handler(input);
         	}
@@ -218,7 +218,7 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    /* mraa_aio_close(temp);
-    mraa_gpio_close(button); */
+    mraa_aio_close(temp);
+    mraa_gpio_close(button); 
 	exit(0);
 }
