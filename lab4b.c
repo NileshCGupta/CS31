@@ -36,23 +36,23 @@ void handler(int signum)
     runflag = 0;
 }
 
-void command_handler(char[] command)
-{
-	switch(command)
-	{
-		case "OFF":
-			break;
-		case "STOP":
-			break;
-		case "START":
-			break;
-		case "SCALE=F":
-			break;
-		case "SCALE=C":
-			break;
-		case "PERIOD="
-	}
-}
+// void command_handler(char[] command)
+// {
+// 	switch(command)
+// 	{
+// 		case "OFF":
+// 			break;
+// 		case "STOP":
+// 			break;
+// 		case "START":
+// 			break;
+// 		case "SCALE=F":
+// 			break;
+// 		case "SCALE=C":
+// 			break;
+// 		case "PERIOD="
+// 	}
+// }
 
 void tempread()
 {
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 				break;
 
 			case 's':
-				scale = atoi(optarg);
+				scale = *optarg;
 				break;
 
 			case 'l':
