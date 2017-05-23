@@ -58,7 +58,11 @@ void buttonread()
 {
 	int buttonState = mraa_gpio_read(button);
 	// Button has been pressed
-	if(buttonState)
+	if(buttonState == -1) {
+		perror("ERROR: Button");
+		exit(EXIT_FAILURE);
+	}
+	else if(buttonState)
 		buttonpressed(); // SHUTDOWN
 }
 
@@ -161,6 +165,7 @@ int main(int argc, char** argv)
 	button = mraa_gpio_init(3);
 	if(temp == NULL) { perror("ERROR: Cannot initialize MRAA temp context"); exit(EXIT_FAILURE); }
 	if(button == NULL) { perror("ERROR: Cannot initialize MRAA button context"); exit(EXIT_FAILURE); }
+	mraa_gpio_dir(button, MRAA_GPIO_IN);
 
 	// Init pollfd
 	ufd[0].fd = 0;
