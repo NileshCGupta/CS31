@@ -91,6 +91,8 @@ void tempread()
 
 void command_handler(char* command)
 {
+	printf("%s", command);
+
 	char* off = "OFF";
 	char* stop = "STOP";
 	char* start = "START";
@@ -205,6 +207,7 @@ int main(int argc, char** argv)
         else if(rv == 1) {
         	if(ufd[0].revents & POLLIN) {
         		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); exit(EXIT_FAILURE); } // receive normal data
+        		printf("%s", input);
         		command_handler(input);
         	}
         } 
