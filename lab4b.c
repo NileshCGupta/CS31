@@ -12,7 +12,6 @@
 #include <mraa/aio.h>
 #include <mraa/i2c.h>
 
-#define BIL 1000000000
 const int B = 4275;
 const int R0 = 100000;
 // const int pinTempSensor = A0;
@@ -164,32 +163,32 @@ int main(int argc, char** argv)
 	if(button == NULL) { perror("ERROR: Cannot initialize MRAA button context"); exit(EXIT_FAILURE); }
 
 	// Init pollfd
-	ufd[0].fd = 0;
+	ufd[0].fd = STDIN;
 	ufd[0].events = POLLIN;
 
     signal(SIGINT, handler);
     int rv;
 
     t = time(NULL);
-	*tm = localtime(&t);
+	tm = localtime(&t);
 	long long currtime_sec = t;
-	long long prevtime_sec = currtime_sec - period*BIL;
+	long long prevtime_sec = currtime_sec - period;
 
     while(runflag) {
-    	// Update current time        
-        t = time(NULL);
-		*tm = localtime(&t);
-		currtime_sec = t;
-
     	buttonread();
     	if(!runflag)
     		break;
     	if(reportsflag & runflag)
-    		// Check if prevtime_sec read was a period or more before the current time
-    		if(currtime_sec >= prevtime_sec + period*BIL) {
+    		// Check if prev read was a period or more before the current time
+    		if(currtime_sec >= prevtime_sec + period) {
     			prevtime_sec = currtime_sec;
     			tempread();
     		}
+
+    	// Update current time        
+        t = time(NULL);
+		tm = localtime(&t);
+		currtime_sec = t;
 
         rv = poll(ufd, 1, 0);
 
