@@ -1,0 +1,16 @@
+NAME:	Nilesh Gupta
+EMAIL:	ngup@g.ucla.edu
+UID:	604-489-201
+
+--------------
+Slip Days Used
+--------------
+
+1 slip day used since I initially had some problems with my board / sensors that set me back
+
+-----
+Files
+-----
+lab4b.c			::	Source file for Edison temperature sensor and button functionality
+Makefile 		::	make specification including clean, check, & dist
+README			::	Edison info + description of tarball files
