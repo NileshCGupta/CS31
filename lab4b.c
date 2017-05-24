@@ -38,22 +38,24 @@ mraa_aio_context temp;
 mraa_gpio_context button;
 
 // Close open files & sensors
-void close_opens()
-{
-	//  Close log file
-    if(fclose(log_file)) {
-        perror("Cannot close log file\n");
-        exit(EXIT_FAILURE);
-    }
+// void close_opens()
+// {
+// 	//  Close log file
+// 	if(logflag) {
+// 	    if(fclose(log_file)) {
+// 	        perror("Cannot close log file\n");
+// 	        exit(EXIT_FAILURE);
+// 	    }
+// 	}
 
-	mraa_aio_close(temp);
-    mraa_gpio_close(button);
-}
+// 	mraa_aio_close(temp);
+//     mraa_gpio_close(button);
+// }
 
 void handler(int signum) 
 {
     fprintf(stderr, "Exit program, received signal: %d.\n", signum);
-    close_opens();
+    // close_opens();
     exit(0);
 }
 
@@ -66,7 +68,7 @@ void buttonpressed()
 		fprintf(log_file, "%02d:%02d:%02d SHUTDOWN\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 
-	close_opens();
+	// close_opens();
 	exit(0);
 }
 
@@ -190,7 +192,7 @@ int main(int argc, char** argv)
 	ufd[0].events = POLLIN;
 
     signal(SIGINT, handler);
-    signal(SIGSEGV, handler);
+    // signal(SIGSEGV, handler);
     int rv;
 
     t = time(NULL);
@@ -227,7 +229,7 @@ int main(int argc, char** argv)
         		if(getline(&input, &len, stdin) == 0) { perror("ERROR: getline"); 
         												exit(EXIT_FAILURE); }
         		if(logflag)
-        			fprintf(log_file, "%s", input);		// append command to logfile
+        			fprintf(log_file, "%s\n", input);		// append command to logfile
         		strtok(input, "\n");		// remove newline char for strcmp purposes
         		command_handler(input);
         	}
@@ -235,6 +237,8 @@ int main(int argc, char** argv)
     }
 
     // Close sensors and logfile & return
-    close_opens();
+    // close_opens();
+    mraa_aio_close(temp);
+    mraa_gpio_close(button);
 	exit(0);
 }
