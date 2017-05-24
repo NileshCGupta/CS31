@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # sanity check script for Project 4B
 #	tarball name
@@ -47,11 +47,6 @@ fi
 # make sure we can untar it
 TEMP="/tmp/TestTemp.$$"
 echo "... Using temporary testing directory" $TEMP
-function cleanup {
-	cd
-	rm -rf $TEMP
-	exit $1
-}
 
 mkdir $TEMP
 cp $tarball $TEMP
