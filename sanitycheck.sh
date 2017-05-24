@@ -74,7 +74,7 @@ done
 
 # make sure the README contains name and e-mail
 echo "... checking for submitter info in $README"
-function idString {
+idString () {
 	result=`grep $1 $README | cut -d: -f2 | tr -d \[:blank:\]`
 	if [ -z "$result" ]
 	then
@@ -92,7 +92,7 @@ idString "NAME:"
 idString "EMAIL:"
 idString "ID:" $student
 
-function makeTarget {
+makeTarget () {
 	result=`grep $1: $MAKEFILE`
 	if [ $? -ne 0 ]
 	then
@@ -153,7 +153,7 @@ do
 done
 
 # see if it accepts the expected arguments
-function testrc {
+testrc () {
 	if [ $1 -ne $2 ]
 	then
 		echo "ERROR: expected RC=$2, GOT $1"
