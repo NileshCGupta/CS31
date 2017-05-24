@@ -22,7 +22,7 @@ int reportsflag = 1;	// generate time + temp reports
 
 int period = 1;
 char *logfile;	// name of log file
-FILE *log_file;	// log file descriptor
+FILE *log_file;	// log file stream
 char scale;		// Celsius / Farenheit measure
 
 char *input = NULL;		// buffer for input commands
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 				break;
 
 			case 's':
-				if(optarg[0] != 'C' || optarg[0] != 'F') {
+				if(optarg[0] != 'C' && optarg[0] != 'F') {
 					perror("ERROR: Bad scale argument");
 					exit(EXIT_FAILURE);
 				}
